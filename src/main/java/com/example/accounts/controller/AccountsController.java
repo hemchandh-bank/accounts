@@ -31,6 +31,21 @@ public class AccountsController {
                 .body(new ResponseDto(AccountsConstants.STATUS_201, AccountsConstants.MESSAGE_201));
     }
 
+    /**
+     * Fetches account details for a customer based on the provided mobile number.
+     *
+     * @param mobileNumber the mobile number of the customer whose account details are to be fetched.
+     * @return a response entity containing the customer data transfer object with account details.
+     */
+    @GetMapping("/fetch")
+    public ResponseEntity<CustomerDto> getAccountsDetails(@RequestParam String mobileNumber) {
+        CustomerDto customerDto = iAccountsService.fetchAccounts(mobileNumber);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(customerDto);
+    }
+
     @GetMapping("/msg")
     public String getMsg() {
         return "Hello world";
