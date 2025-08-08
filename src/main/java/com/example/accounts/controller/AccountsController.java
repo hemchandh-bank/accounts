@@ -46,6 +46,22 @@ public class AccountsController {
                 .body(customerDto);
     }
 
+    @PutMapping("/update")
+    public ResponseEntity<ResponseDto> updateDetails(@RequestBody CustomerDto customerDto) {
+        boolean updateStatus = iAccountsService.updateCustomerDetails(customerDto);
+        if(updateStatus) {
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(new ResponseDto(AccountsConstants.STATUS_200, AccountsConstants.MESSAGE_200));
+
+        } else {
+            return ResponseEntity
+                    .status(HttpStatus.EXPECTATION_FAILED)
+                    .body(new ResponseDto(AccountsConstants.STATUS_417, AccountsConstants.MESSAGE_417_UPDATE));
+
+        }
+    }
+
     @GetMapping("/msg")
     public String getMsg() {
         return "Hello world";

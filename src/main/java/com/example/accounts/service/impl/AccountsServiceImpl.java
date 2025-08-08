@@ -41,28 +41,6 @@ public class AccountsServiceImpl implements IAccountsService {
     }
 
     /**
-     * Fetches the account details for a customer based on the provided mobile number.
-     *
-     * @param mobileNumber the mobile number of the customer whose account details are to be fetched.
-     * @return a {@link CustomerDto} containing the customer's account details.
-     * @throws ResourceNotFoundException if no customer or account is found for the provided mobile number.
-     */
-    @Override
-    public CustomerDto fetchAccounts(String mobileNumber) {
-        Customer customer = customerRepository.findByMobileNumber(mobileNumber).orElseThrow(
-                () -> new ResourceNotFoundException("Customer", "Mobile number", mobileNumber)
-        );
-
-        Accounts accounts = accountsRepository.findByCustomerId(customer.getCustomerId()).orElseThrow(
-                () -> new ResourceNotFoundException("Accounts", "customer id", customer.getCustomerId().toString())
-        );
-        CustomerDto customerDtoResponse = CustomerMapper.mapToCustomerDto(customer, new CustomerDto());
-        customerDtoResponse.setAccountsDto(AccountsMapper.mapToAccountsDto(accounts, new AccountsDto()));
-
-        return customerDtoResponse;
-    }
-
-    /**
      * Check if a customer does not exist by mobile number
      *
      * @param customerDto the customer data transfer object containing the details of the customer.
@@ -89,4 +67,51 @@ public class AccountsServiceImpl implements IAccountsService {
         newAccount.setBranchAddress(AccountsConstants.ADDRESS);
         return newAccount;
     }
+
+    /**
+     * Fetches the account details for a customer based on the provided mobile number.
+     *
+     * @param mobileNumber the mobile number of the customer whose account details are to be fetched.
+     * @return a {@link CustomerDto} containing the customer's account details.
+     * @throws ResourceNotFoundException if no customer or account is found for the provided mobile number.
+     */
+    @Override
+    public CustomerDto fetchAccounts(String mobileNumber) {
+        Customer customer = customerRepository.findByMobileNumber(mobileNumber).orElseThrow(
+                () -> new ResourceNotFoundException("Customer", "Mobile number", mobileNumber)
+        );
+
+        Accounts accounts = accountsRepository.findByCustomerId(customer.getCustomerId()).orElseThrow(
+                () -> new ResourceNotFoundException("Accounts", "customer id", customer.getCustomerId().toString())
+        );
+        CustomerDto customerDtoResponse = CustomerMapper.mapToCustomerDto(customer, new CustomerDto());
+        customerDtoResponse.setAccountsDto(AccountsMapper.mapToAccountsDto(accounts, new AccountsDto()));
+
+        return customerDtoResponse;
+    }
+
+    @Override
+    public boolean updateCustomerDetails(CustomerDto customerDto) {
+        boolean customerDetailsUpdateStatus = false;
+        if(customerDto.getAccountsDto()!=null){
+            Customer customer = CustomerMapper.mapToCustomer(customerDto, new Customer());
+            Accounts accounts = AccountsMapper.mapToAccounts(customerDto.getAccountsDto(), new Accounts());
+
+            Accounts accountsData = accountsRepository.findByAccountNumber(accounts.getAccountNumber()).orElseThrow(
+                    () -> new ResourceNotFoundException("Account", "Mobile", customerDto.getMobileNumber())
+            );
+            Accounts accountsDataToUpdate = AccountsMapper.mapToAccounts(customerDto.getAccountsDto(), accountsData);
+            accountsRepository.save(accountsDataToUpdate);
+
+            Customer customerData = customerRepository.findByCustomerId(accountsData.getCustomerId()).orElseThrow(
+                    () -> new ResourceNotFoundException("Account", "Mobile", customerDto.getMobileNumber())
+            );
+            Customer customerDataToUpdate = CustomerMapper.mapToCustomer(customerDto, customerData);
+            customerRepository.save(customerDataToUpdate);
+            customerDetailsUpdateStatus = true;
+        }
+        return customerDetailsUpdateStatus;
+    }
+
+
 }
