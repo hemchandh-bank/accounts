@@ -15,7 +15,6 @@ import com.example.accounts.service.IAccountsService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.Random;
 
 @Service
@@ -34,8 +33,6 @@ public class AccountsServiceImpl implements IAccountsService {
     public void createAccount(CustomerDto customerDto) {
         checkCustomerAlreadyExists(customerDto);
         Customer customer = CustomerMapper.mapToCustomer(customerDto, new Customer());
-        customer.setCreatedAt(LocalDateTime.now());
-        customer.setCreatedBy("Admin");
         Customer savedCustomer = customerRepository.save(customer);
         accountsRepository.save(createNewAccount(savedCustomer));
     }
@@ -60,8 +57,6 @@ public class AccountsServiceImpl implements IAccountsService {
         Accounts newAccount = new Accounts();
         newAccount.setCustomerId(customer.getCustomerId());
         long randomAccNumber = 1_00_00_00_000L + new Random().nextInt(90_00_00_000);
-        newAccount.setCreatedAt(LocalDateTime.now());
-        newAccount.setCreatedBy("Admin");
         newAccount.setAccountNumber(randomAccNumber);
         newAccount.setAccountType(AccountsConstants.SAVINGS);
         newAccount.setBranchAddress(AccountsConstants.ADDRESS);
@@ -100,7 +95,7 @@ public class AccountsServiceImpl implements IAccountsService {
     @Override
     public boolean updateCustomerDetails(CustomerDto customerDto) {
         boolean customerDetailsUpdateStatus = false;
-        if(customerDto.getAccountsDto()!=null){
+        if (customerDto.getAccountsDto() != null) {
             Customer customer = CustomerMapper.mapToCustomer(customerDto, new Customer());
             Accounts accounts = AccountsMapper.mapToAccounts(customerDto.getAccountsDto(), new Accounts());
 
