@@ -1,14 +1,24 @@
 package com.example.accounts.dto;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Data
 public class CustomerDto {
 
+    @NotEmpty(message = "Name should not be null or empty")
+    @Size(min = 3, max = 25, message = "The length of name should between 3 to 25")
     private String name;
 
+    @NotEmpty(message = "Email should not be null or empty")
+    @Email(message = "Enter valid email address")
     private String email;
 
+    @NotEmpty(message = "Mobile number should be null or empty")
+    @Pattern(regexp = "(^$|[0-9]{10})", message = "Mobile number should be 10 digits")
     private String mobileNumber;
 
     private AccountsDto accountsDto;

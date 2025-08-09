@@ -21,5 +21,14 @@ public interface IAccountsService {
      */
     CustomerDto fetchAccounts(String mobileNumber);
 
+    /**
+     * Updates the customer details for the given customer data transfer object.
+     *
+     * @param customerDto the customer data transfer object containing updated details.
+     * @return a boolean indicating the success status of the update operation.
+     * @throws com.example.accounts.exception.ResourceNotFoundException if the account or customer is not found.
+     */
     boolean updateCustomerDetails(CustomerDto customerDto);
+
+    boolean deleteCustomer(String mobileNumber);
 }
