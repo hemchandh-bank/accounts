@@ -21,6 +21,15 @@ import java.util.Map;
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
 
+    /**
+     * Handle {@link MethodArgumentNotValidException} thrown in the application.
+     *
+     * @param ex         the exception thrown
+     * @param headers    the headers of the request
+     * @param status     the status of the response
+     * @param request    the web request from which the exception occurred
+     * @return a response entity containing a map of validation errors
+     */
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(
             MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
